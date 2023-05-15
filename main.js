@@ -14,12 +14,28 @@ const song = $('.song');
 const random = $('.btn-random');
 const repeat = $('.btn-repeat');
 const playList = $('.playlist');
+const bg_option = $('.BG_option')
+const bg_video = $('.BG_video');
+const video = $('#video');
 
 const app = {
-    currentIndex: 0,  
+    currentIndex: 0,
+    bgVideoindex: 0,  
     isplaying: false,
     isRandom: false,
     isRepeat: false,
+    Bg_video:[
+        {
+            theme: 'Railroad',
+            video_id: 0,
+            path: './BG-video/Railroad.mp4'
+        },
+        {
+            theme: 'Cityroad',
+            video_id: 1,
+            path: './BG-video/road.mp4'
+        }
+    ],
     songs: [
         {
             name: 'Khác biệt to lớn',
@@ -66,6 +82,19 @@ const app = {
       ],
       
     render: function(){
+
+        const html = this.Bg_video.map((video, index) => {
+            return `
+            <li class="video_option ${index === this.bgVideoindex ? 'active' : ''}" id=${video.video_id}>
+                <div class="option_body">
+                    <h4 class="title">${video.theme}</h4>
+                </div>
+            </li>
+            `
+        })
+        bg_option.innerHTML = html.join('');
+
+
         const htmls = this.songs.map((song, index)=> {
             return `
             <li class="song ${index === this.currentIndex ? 'active' : ''}" id=${song.song_id}>
@@ -211,6 +240,16 @@ const app = {
             currentSong.classList.add('active');
         }
 
+        //highlight theme dang phat
+        function highlightTheme(x){
+            const i = x;
+            $('.video_option.active').classList.remove('active');
+            const videoList = $$('.video_option');
+            const currentSong = videoList[i];
+            currentSong.classList.add('active');
+        }
+
+
         //Pause bằng space
         document.addEventListener("keydown", function(event) {
             if (event.code === "Space" || event.keyCode === 32 || event.key === " ") {
@@ -235,6 +274,17 @@ const app = {
                 }
             }
         }
+
+        // lắng nghe click chuyển theme
+        bg_option.onclick = function(e){
+            const themeNode = e.target.closest('.video_option:not(.active)');
+            if(themeNode) {
+                _this.bgVideoindex = Number(themeNode.getAttribute('id'));
+                _this.loadCurrentBground();
+                highlightTheme(_this.bgVideoindex);
+                video.play();
+            }
+        }
     },
 
     defineProperties: function(){
@@ -243,13 +293,33 @@ const app = {
                 return this.songs[this.currentIndex];
             }
         })
+        // Object.defineProperty(this, 'CurrentSong', {
+        //     get: function() {
+        //       return this.songs[this.currentIndex];
+        //     }
+        //   });
+        
+        //   Object.defineProperty(this, 'CurrentVideo', {
+        //     get: function() {
+        //       return this.videos[this.bgVideoindex];
+        //     }
+        //   });
+    },
+    defineProp: function(){
+        Object.defineProperty(this, 'CurrentVideo', {
+            get: function(){
+                return this.Bg_video[this.bgVideoindex];
+            }
+        })
     },
     loadCurrentSong: function(){
         heading.textContent = this.CurrentSong.name;
         cdThumb.style.backgroundImage = `url('${this.CurrentSong.img}')`;
         audio.src = this.CurrentSong.path;
-
-
+    },
+    loadCurrentBground: function(){
+        video.src = this.CurrentVideo.path;
+        console.log(video.src)
     },
     scrollToActiveSong: function(){
         setTimeout(()=>{
@@ -285,6 +355,10 @@ const app = {
     
     start: function(){
         this.defineProperties();
+
+        this.defineProp();
+
+        this.loadCurrentBground();
 
         this.loadCurrentSong();
 

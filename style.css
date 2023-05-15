@@ -11,6 +11,7 @@
   }
   
   body {
+    /* position: relative; */
     margin: 0;
 		padding: 0;
 		overflow: hidden;
@@ -21,6 +22,37 @@
     font-family: "Poppins", sans-serif;
   }
   
+  ul {
+    list-style: none;
+  }
+
+  .BG_option{
+    /* display: flex; */
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 8px;
+    width: 200px;
+    height: 100px;
+    border-radius: 0 0 0 10px;
+    background: rgba(0,0,0,0.5); 
+  }
+
+  .video_option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    background-color:   var(--theme-color);
+    padding: 8px 8px;
+    border-radius: 5px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .video_option.active {
+    background-color: var(--primary-color);
+  }
+
   video {
     position: absolute;
     top: 50%;
@@ -76,7 +108,7 @@
   }
   
   header h2 {
-    color: #fff;
+    color: #000;
     font-size: 20px;
   }
   
@@ -195,10 +227,12 @@
     background-color: var(--primary-color);
   }
   
+  .video_option:active,
   .song:active {
     opacity: 0.8;
   }
   
+  .video_option.active, 
   .song.active .option,
   .song.active .author,
   .song.active .title {
